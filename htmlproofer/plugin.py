@@ -25,6 +25,7 @@ MARKDOWN_ANCHOR_PATTERN = re.compile(r'(.+)#(.+)')
 HEADING_PATTERN = re.compile(r'\s*#+\s*(.*)')
 HTML_LINK_PATTERN = re.compile(r'.*<a id=\"(.*)\">.*')
 IMAGE_PATTERN = re.compile(r'\[\!\[.*\]\(.*\)\].*|\!\[.*\]\[.*\].*')
+STYLE_PATTERN = re.compile(r'\{\:[^}]*\}.*')
 LOCAL_PATTERNS = [
     re.compile(rf'https?://{local}')
     for local in ('localhost', '127.0.0.1', 'app_server')
@@ -151,6 +152,8 @@ class HtmlProoferPlugin(BasePlugin):
                 # # Heading [![Image](image-link)] or ![Image][image-reference]
                 # But these images are not included in the generated anchor, so remove them.
                 heading = re.sub(IMAGE_PATTERN, '', heading)
+                # Likewise for styling.
+                heading = re.sub(STYLE_PATTERN, '', heading)
                 anchor_slug = slugify(heading, '-')
                 if anchor == anchor_slug:
                     return True
